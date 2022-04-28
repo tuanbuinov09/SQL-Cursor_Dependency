@@ -13,7 +13,6 @@ namespace ChuyenDeCNPM_De2
 {
     public partial class MainForm : DevExpress.XtraEditors.XtraForm
     {
-        private const string TABLE_NAME = "BANG_GIA_TRUC_TUYEN";
         private SqlConnection _connection = null;
         private SqlCommand _command = null;
 
@@ -38,6 +37,18 @@ namespace ChuyenDeCNPM_De2
         //    buttonMuaBan.Text = "Bán";
         //    loaiGiaoDich = "B";
         //}
+
+        private void DataGridViewBangGia_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridViewBangGiaTT.Rows)
+            {
+                row.Cells["Giá Khớp"].Style.BackColor = Color.LightGray;
+                row.Cells["KL Khớp"].Style.BackColor = Color.LightGray;
+
+                //row.Cells["Giá Khớp"].Style.ForeColor = Color.LimeGreen;
+                //row.Cells["KL Khớp"].Style.ForeColor = Color.LimeGreen;
+            }
+        }
 
         private bool checkInput()
         {
@@ -71,7 +82,7 @@ namespace ChuyenDeCNPM_De2
             comboBoxLoaiLenh.SelectedIndex = 0;
             comboBoxLoaiLenh.SelectedIndex = 0;
             spinEditGia.Value = 1000;
-            spinEditKhoiLuong.Value = 100;
+            spinEditSoLuong.Value = 100;
             textEditMaCP.Text = "";
         }
         private void comboBoxMuaBan_SelectedIndexChanged(object sender, EventArgs e)
@@ -80,10 +91,12 @@ namespace ChuyenDeCNPM_De2
             {
                 buttonMuaBan.Text = "Mua";
                 loaiGiaoDich = "M";
+                labelGia.Text = "Giá mua";
                 return;
             }
             buttonMuaBan.Text = "Bán";
             loaiGiaoDich = "B";
+            labelGia.Text = "Giá bán";
         }
         private void buttonMuaBan_Click(object sender, EventArgs e)
         {
@@ -96,15 +109,13 @@ namespace ChuyenDeCNPM_De2
                 })
                 {
                    
-
-
                     DateTime time = DateTime.Now;
                     string timeString = time.ToString("yyyy-MM-dd HH:mm:ss.mmm");
 
                     command.Parameters.Add(new SqlParameter("@maCP", textEditMaCP.Text.Trim()));
                     command.Parameters.Add(new SqlParameter("@ngay", timeString));
                     command.Parameters.Add(new SqlParameter("@loaiGD", loaiGiaoDich));
-                    command.Parameters.Add(new SqlParameter("@soLuongMB", spinEditKhoiLuong.Value));
+                    command.Parameters.Add(new SqlParameter("@soLuongMB", spinEditSoLuong.Value));
                     command.Parameters.Add(new SqlParameter("@giaDatMB", spinEditGia.Value));
 
                     conn.Open();
@@ -125,7 +136,7 @@ namespace ChuyenDeCNPM_De2
         }
         private void MainForm_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'cHUNGKHOANDataSet.BANG_GIA_TRUC_TUYEN' table. You can move, or remove it, as needed.
+            // TODO: This line of code loads data into the 'cHUNGKHOANDataSet.BANG_GIA_TRUC_TUYEN' table. You can move, or remove it, as needed
 
             comboBoxMuaBan.DisplayMember = "Text";
             comboBoxMuaBan.ValueMember = "Value";
@@ -196,8 +207,8 @@ namespace ChuyenDeCNPM_De2
         }
         private string GetSQL()
         {
-            return " SELECT MACP AS[Mã CP],DM_GIA3 AS[Giá Mua 3], DM_SL3 AS[Số Lượng Mua 3], DM_GIA2 AS[Giá Mua 2], DM_SL2 AS[Số Lượng Mua 2], DM_GIA1 AS[Giá Mua 1], DM_SL1 AS[Số Lượng Mua 1], KL_GIA AS[Giá Khớp], "
-                    + " KL_SL AS[Số Lượng Khớp], DB_GIA1 AS[Giá Bán 1], DB_SL1 AS[Số Lượng Bán 1], DB_GIA2 AS[Giá Bán 2], DB_SL2 AS[Số Lượng Bán 2], DB_GIA3 AS[Giá Bán 3], DB_SL3 AS[Số Lượng Bán 3] " +
+            return " SELECT MACP AS[Mã CP],DM_GIA3 AS[Giá Mua 3], DM_SL3 AS[KL Mua 3], DM_GIA2 AS[Giá Mua 2], DM_SL2 AS[KL Mua 2], DM_GIA1 AS[Giá Mua 1], DM_SL1 AS[KL Mua 1], KL_GIA AS[Giá Khớp], "
+                    + " KL_SL AS[KL Khớp], DB_GIA1 AS[Giá Bán 1], DB_SL1 AS[KL Bán 1], DB_GIA2 AS[Giá Bán 2], DB_SL2 AS[KL Bán 2], DB_GIA3 AS[Giá Bán 3], DB_SL3 AS[KL Bán 3] " +
                     "FROM dbo.BANG_GIA_TRUC_TUYEN ";
         }
 
@@ -260,16 +271,25 @@ namespace ChuyenDeCNPM_De2
             SqlDependency dependency = (SqlDependency)sender;
             dependency.OnChange -= dependency_OnChange;
             // Reload the dataset that's bound to the grid.
-            MessageBox.Show("changed");
+            //MessageBox.Show("changed");
 
             GetData();
 
         }
 
-        private void dataGridViewBangGiaTT_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dataGridViewBangGiaTT_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            _vitriRow = dataGridViewBangGiaTT.CurrentCell.RowIndex;
-            _vitriColumn = dataGridViewBangGiaTT.CurrentCell.ColumnIndex;
+            try
+            {
+                _vitriRow = dataGridViewBangGiaTT.CurrentCell.RowIndex;
+                _vitriColumn = dataGridViewBangGiaTT.CurrentCell.ColumnIndex;
+
+            }
+            catch(Exception)
+            {
+
+            }
+            
         }
 
     }
