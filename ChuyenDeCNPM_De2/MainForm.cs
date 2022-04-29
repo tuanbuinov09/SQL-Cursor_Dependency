@@ -228,7 +228,7 @@ namespace ChuyenDeCNPM_De2
 
             // SqlDataReader is then loaded into a DataTable and finally the DataTable is used to populate the DataGridView.
             DataTable dt = new DataTable();
-            dt.Load(_command.ExecuteReader());    // vì chỉ đọc thôi nên dùng data Reader. ko cần phải dùng dataset
+            dt.Load(_command.ExecuteReader()); 
             this.dataGridViewBangGiaTT.DataSource = dt;
 
             // giữ vị trí cursor
